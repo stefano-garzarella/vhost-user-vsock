@@ -1,0 +1,18 @@
+[package]
+name = "vhost_user_vsock"
+version = "0.1.0"
+authors = ["Stefano Garzarella"]
+edition = "2018"
+
+[dependencies]
+bitflags = "1.1.0"
+epoll = ">=4.0.1"
+libc = "0.2.68"
+log = "0.4.8"
+vhost_user_backend = { git = "https://github.com/stefano-garzarella/cloud-hypervisor.git", branch = "vsock-packet-public" }
+vhost_rs = { git = "https://github.com/cloud-hypervisor/vhost", branch = "dragonball", package = "vhost", features = ["vhost-user-slave"] }
+virtio-bindings = "0.1.0"
+vm-memory = "0.2.1"
+vm-virtio = { git = "https://github.com/stefano-garzarella/cloud-hypervisor.git", branch = "vsock-packet-public" }
+vmm = { git = "https://github.com/stefano-garzarella/cloud-hypervisor.git", branch = "vsock-packet-public" }
+vmm-sys-util = ">=0.3.1"
