@@ -166,7 +166,7 @@ impl VhostUserVsockThread {
             return true;
         }
 
-        return false;
+        false
     }
 
     fn process_tx(&mut self, vring: &mut Vring) -> bool {
@@ -209,7 +209,7 @@ impl VhostUserVsockThread {
             return true;
         }
 
-        return false;
+        false
     }
 }
 pub struct VhostUserVsockBackend {
