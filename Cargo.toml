@@ -1,7 +1,8 @@
 [package]
 name = "vhost_user_vsock"
 version = "0.1.0"
-authors = ["Stefano Garzarella"]
+authors = ["Stefano Garzarella <sgarzare@redhat.com>"]
+description = "virtio-vsock device emulation in user-space"
 edition = "2018"
 
 [dependencies]
