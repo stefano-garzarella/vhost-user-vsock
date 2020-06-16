@@ -24,7 +24,7 @@ checksum = "4d25d88fd6b8041580a654f9d0c581a047baee2b3efee13275f2fc392fc75034"
 [[package]]
 name = "arch"
 version = "0.1.0"
-source = "git+https://github.com/stefano-garzarella/cloud-hypervisor.git?branch=vsock-packet-public#e3516c62351bdcc674271943b587d4467dd5d0f2"
+source = "git+https://github.com/cloud-hypervisor/cloud-hypervisor.git#a17aaec663e37aed1e79d0b7b2a1c46cee8de390"
 dependencies = [
  "arch_gen",
  "byteorder",
@@ -38,7 +38,7 @@ dependencies = [
 [[package]]
 name = "arch_gen"
 version = "0.1.0"
-source = "git+https://github.com/stefano-garzarella/cloud-hypervisor.git?branch=vsock-packet-public#e3516c62351bdcc674271943b587d4467dd5d0f2"
+source = "git+https://github.com/cloud-hypervisor/cloud-hypervisor.git#a17aaec663e37aed1e79d0b7b2a1c46cee8de390"
 
 [[package]]
 name = "atty"
@@ -88,7 +88,7 @@ dependencies = [
 [[package]]
 name = "devices"
 version = "0.1.0"
-source = "git+https://github.com/stefano-garzarella/cloud-hypervisor.git?branch=vsock-packet-public#e3516c62351bdcc674271943b587d4467dd5d0f2"
+source = "git+https://github.com/cloud-hypervisor/cloud-hypervisor.git#a17aaec663e37aed1e79d0b7b2a1c46cee8de390"
 dependencies = [
  "anyhow",
  "bitflags",
@@ -218,7 +218,7 @@ dependencies = [
 [[package]]
 name = "net_gen"
 version = "0.1.0"
-source = "git+https://github.com/stefano-garzarella/cloud-hypervisor.git?branch=vsock-packet-public#e3516c62351bdcc674271943b587d4467dd5d0f2"
+source = "git+https://github.com/cloud-hypervisor/cloud-hypervisor.git#a17aaec663e37aed1e79d0b7b2a1c46cee8de390"
 dependencies = [
  "vmm-sys-util",
 ]
@@ -226,7 +226,7 @@ dependencies = [
 [[package]]
 name = "net_util"
 version = "0.1.0"
-source = "git+https://github.com/stefano-garzarella/cloud-hypervisor.git?branch=vsock-packet-public#e3516c62351bdcc674271943b587d4467dd5d0f2"
+source = "git+https://github.com/cloud-hypervisor/cloud-hypervisor.git#a17aaec663e37aed1e79d0b7b2a1c46cee8de390"
 dependencies = [
  "libc",
  "net_gen",
@@ -259,7 +259,7 @@ dependencies = [
 [[package]]
 name = "qcow"
 version = "0.1.0"
-source = "git+https://github.com/stefano-garzarella/cloud-hypervisor.git?branch=vsock-packet-public#e3516c62351bdcc674271943b587d4467dd5d0f2"
+source = "git+https://github.com/cloud-hypervisor/cloud-hypervisor.git#a17aaec663e37aed1e79d0b7b2a1c46cee8de390"
 dependencies = [
  "byteorder",
  "libc",
@@ -466,18 +466,18 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "1.0.19"
+version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b13f926965ad00595dd129fa12823b04bbf866e9085ab0a5f2b05b850fbfc344"
+checksum = "7dfdd070ccd8ccb78f4ad66bf1982dc37f620ef696c6b5028fe2ed83dd3d0d08"
 dependencies = [
  "thiserror-impl",
 ]
 
 [[package]]
 name = "thiserror-impl"
-version = "1.0.19"
+version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "893582086c2f98cde18f906265a65b5030a074b1046c674ae898be6519a7f479"
+checksum = "bd80fc12f73063ac132ac92aceea36734f04a1d93c1240c6944e23a3b8841793"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -564,7 +564,7 @@ dependencies = [
 [[package]]
 name = "vhost_user_backend"
 version = "0.1.0"
-source = "git+https://github.com/stefano-garzarella/cloud-hypervisor.git?branch=vsock-packet-public#e3516c62351bdcc674271943b587d4467dd5d0f2"
+source = "git+https://github.com/cloud-hypervisor/cloud-hypervisor.git#a17aaec663e37aed1e79d0b7b2a1c46cee8de390"
 dependencies = [
  "epoll",
  "libc",
@@ -603,8 +603,9 @@ checksum = "3ff512178285488516ed85f15b5d0113a7cdb89e9e8a760b269ae4f02b84bd6b"
 [[package]]
 name = "vm-allocator"
 version = "0.1.0"
-source = "git+https://github.com/stefano-garzarella/cloud-hypervisor.git?branch=vsock-packet-public#e3516c62351bdcc674271943b587d4467dd5d0f2"
+source = "git+https://github.com/cloud-hypervisor/cloud-hypervisor.git#a17aaec663e37aed1e79d0b7b2a1c46cee8de390"
 dependencies = [
+ "arch",
  "libc",
  "vm-memory",
 ]
@@ -612,7 +613,7 @@ dependencies = [
 [[package]]
 name = "vm-device"
 version = "0.1.0"
-source = "git+https://github.com/stefano-garzarella/cloud-hypervisor.git?branch=vsock-packet-public#e3516c62351bdcc674271943b587d4467dd5d0f2"
+source = "git+https://github.com/cloud-hypervisor/cloud-hypervisor.git#a17aaec663e37aed1e79d0b7b2a1c46cee8de390"
 dependencies = [
  "anyhow",
  "serde",
@@ -637,7 +638,7 @@ dependencies = [
 [[package]]
 name = "vm-migration"
 version = "0.1.0"
-source = "git+https://github.com/stefano-garzarella/cloud-hypervisor.git?branch=vsock-packet-public#e3516c62351bdcc674271943b587d4467dd5d0f2"
+source = "git+https://github.com/cloud-hypervisor/cloud-hypervisor.git#a17aaec663e37aed1e79d0b7b2a1c46cee8de390"
 dependencies = [
  "anyhow",
  "serde",
@@ -649,7 +650,7 @@ dependencies = [
 [[package]]
 name = "vm-virtio"
 version = "0.1.0"
-source = "git+https://github.com/stefano-garzarella/cloud-hypervisor.git?branch=vsock-packet-public#e3516c62351bdcc674271943b587d4467dd5d0f2"
+source = "git+https://github.com/cloud-hypervisor/cloud-hypervisor.git#a17aaec663e37aed1e79d0b7b2a1c46cee8de390"
 dependencies = [
  "anyhow",
  "arc-swap",
@@ -677,7 +678,7 @@ dependencies = [
 [[package]]
 name = "vmm"
 version = "0.1.0"
-source = "git+https://github.com/stefano-garzarella/cloud-hypervisor.git?branch=vsock-packet-public#e3516c62351bdcc674271943b587d4467dd5d0f2"
+source = "git+https://github.com/cloud-hypervisor/cloud-hypervisor.git#a17aaec663e37aed1e79d0b7b2a1c46cee8de390"
 dependencies = [
  "anyhow",
  "arc-swap",
