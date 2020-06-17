@@ -1,9 +1,13 @@
 [package]
 name = "vhost_user_vsock"
 version = "0.1.0"
+edition = "2018"
 authors = ["Stefano Garzarella <sgarzare@redhat.com>"]
 description = "virtio-vsock device emulation in user-space"
-edition = "2018"
+repository = "https://github.com/stefano-garzarella/vhost-user-vsock"
+readme = "README.md"
+license-file = "LICENSE"
+keywords = ["vhost", "vsock", "vmm"]
 
 [dependencies]
 bitflags = "1.1.0"
