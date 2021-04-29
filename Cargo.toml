@@ -11,14 +11,24 @@ keywords = ["vhost", "vsock", "vmm"]
 
 [dependencies]
 bitflags = "1.1.0"
-clap = { version = "2.33.1", features=["wrap_help"] }
-epoll = ">=4.0.1"
-libc = "0.2.68"
-log = "0.4.8"
+clap = { version = "2.33.3", features=["wrap_help"] }
+epoll = ">=4.3.1"
+libc = "0.2.91"
+log = "0.4.14"
 vhost_user_backend = { git = "https://github.com/cloud-hypervisor/cloud-hypervisor.git" }
-vhost_rs = { git = "https://github.com/cloud-hypervisor/vhost", branch = "dragonball", package = "vhost", features = ["vhost-user-slave"] }
+vhost = {git = "https://github.com/rust-vmm/vhost", branch = "master" }
 virtio-bindings = "0.1.0"
-vm-memory = "0.2.1"
+vm-memory = "0.5.0"
 vm-virtio = { git = "https://github.com/cloud-hypervisor/cloud-hypervisor.git" }
 vmm = { git = "https://github.com/cloud-hypervisor/cloud-hypervisor.git" }
-vmm-sys-util = ">=0.3.1"
+vmm-sys-util = ">=0.8.0"
+virtio-devices = { git = "https://github.com/cloud-hypervisor/cloud-hypervisor.git" }
+option_parser = { git = "https://github.com/cloud-hypervisor/cloud-hypervisor.git" }
+
+# List of patched crates
+[patch.crates-io]
+kvm-bindings = { git = "https://github.com/cloud-hypervisor/kvm-bindings", branch = "ch-v0.4.0", features = ["with-serde", "fam-wrappers"] }
+
+[features]
+default = ["kvm"]
+kvm = ["vmm/kvm"]
