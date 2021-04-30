@@ -9,7 +9,7 @@
 // SPDX-License-Identifier: (Apache-2.0 AND BSD-3-Clause)
 
 extern crate log;
-extern crate vhost_rs;
+extern crate vhost;
 extern crate vhost_user_backend;
 extern crate vm_virtio;
 
@@ -18,23 +18,25 @@ use libc::{self, EFD_NONBLOCK};
 use log::*;
 use std::fmt;
 use std::io::{self};
+use std::mem;
 use std::process;
+use std::slice;
 use std::sync::{Arc, Mutex, RwLock};
 use std::vec::Vec;
-use std::slice;
-use std::mem;
-use vhost_rs::vhost_user::message::*;
-use vhost_rs::vhost_user::Listener;
-use vhost_rs::vhost_user::Error as VhostUserError;
+use vhost::vhost_user::message::*;
+use vhost::vhost_user::Error as VhostUserError;
+use vhost::vhost_user::Listener;
 use vhost_user_backend::{VhostUserBackend, VhostUserDaemon, Vring, VringWorker};
 use virtio_bindings::bindings::virtio_net::*;
-use virtio_bindings::bindings::virtio_ring::*;
 use virtio_bindings::bindings::virtio_ring::__u64;
+use virtio_bindings::bindings::virtio_ring::*;
+use virtio_devices::vsock::{
+    VsockChannel, VsockEpollListener, VsockPacket, VsockUnixBackend, VsockUnixError,
+};
+use virtio_devices::DeviceEventT;
 use vm_memory::GuestMemoryMmap;
-use vm_virtio::{DeviceEventT};
-use vmm::config::{OptionParser, OptionParserError};
+use option_parser::{OptionParser, OptionParserError};
 use vmm_sys_util::eventfd::EventFd;
-use vm_virtio::vsock::{VsockPacket, VsockChannel, VsockUnixBackend, VsockEpollListener};
 
 const QUEUE_SIZE: usize = 128;
 const NUM_QUEUES: usize = 2;
@@ -70,7 +72,7 @@ pub enum Error {
     /// Failed to handle unknown event.
     HandleEventUnknownEvent,
     /// Cannot create virtio-vsock backend
-    CreateVsockBackend(vm_virtio::vsock::VsockUnixError),
+    CreateVsockBackend(VsockUnixError),
     /// No uds_path provided
     UDSPathParameterMissing,
     /// No guest_cid provided
