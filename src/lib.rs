@@ -9,32 +9,34 @@
 // SPDX-License-Identifier: (Apache-2.0 AND BSD-3-Clause)
 
 extern crate log;
-extern crate vhost_rs;
+extern crate vhost;
 extern crate vhost_user_backend;
 extern crate vm_virtio;
 
 use epoll;
 use libc::{self, EFD_NONBLOCK};
 use log::*;
+use option_parser::{OptionParser, OptionParserError};
 use std::fmt;
 use std::io::{self};
+use std::mem;
 use std::process;
+use std::slice;
 use std::sync::{Arc, Mutex, RwLock};
 use std::vec::Vec;
-use std::slice;
-use std::mem;
-use vhost_rs::vhost_user::message::*;
-use vhost_rs::vhost_user::Listener;
-use vhost_rs::vhost_user::Error as VhostUserError;
+use vhost::vhost_user::message::*;
+use vhost::vhost_user::Error as VhostUserError;
+use vhost::vhost_user::Listener;
 use vhost_user_backend::{VhostUserBackend, VhostUserDaemon, Vring, VringWorker};
 use virtio_bindings::bindings::virtio_net::*;
-use virtio_bindings::bindings::virtio_ring::*;
 use virtio_bindings::bindings::virtio_ring::__u64;
+use virtio_bindings::bindings::virtio_ring::*;
+use virtio_devices::vsock::{
+    VsockChannel, VsockEpollListener, VsockPacket, VsockUnixBackend, VsockUnixError,
+};
+use virtio_devices::DeviceEventT;
 use vm_memory::GuestMemoryMmap;
-use vm_virtio::{DeviceEventT};
-use vmm::config::{OptionParser, OptionParserError};
 use vmm_sys_util::eventfd::EventFd;
-use vm_virtio::vsock::{VsockPacket, VsockChannel, VsockUnixBackend, VsockEpollListener};
 
 const QUEUE_SIZE: usize = 128;
 const NUM_QUEUES: usize = 2;
@@ -70,7 +72,7 @@ pub enum Error {
     /// Failed to handle unknown event.
     HandleEventUnknownEvent,
     /// Cannot create virtio-vsock backend
-    CreateVsockBackend(vm_virtio::vsock::VsockUnixError),
+    CreateVsockBackend(VsockUnixError),
     /// No uds_path provided
     UDSPathParameterMissing,
     /// No guest_cid provided
@@ -102,9 +104,7 @@ struct VhostUserVsockThread {
 }
 
 impl VhostUserVsockThread {
-    fn new(
-        unix_backend: VsockUnixBackend,
-    ) -> Result<Self> {
+    fn new(unix_backend: VsockUnixBackend) -> Result<Self> {
         Ok(VhostUserVsockThread {
             mem: None,
             event_idx: false,
@@ -117,11 +117,15 @@ impl VhostUserVsockThread {
     pub fn set_vring_worker(&mut self, vring_worker: Option<Arc<VringWorker>>) {
         self.vring_worker = vring_worker;
 
-        self.vring_worker.as_ref().unwrap().register_listener(
-            self.unix_backend.get_polled_fd(),
-            self.unix_backend.get_polled_evset(),
-            u64::from(BACKEND_EVENT),
-        ).unwrap();
+        self.vring_worker
+            .as_ref()
+            .unwrap()
+            .register_listener(
+                self.unix_backend.get_polled_fd(),
+                self.unix_backend.get_polled_evset(),
+                u64::from(BACKEND_EVENT),
+            )
+            .unwrap();
     }
 
     fn process_rx(&mut self, vring: &mut Vring) -> bool {
@@ -219,12 +223,8 @@ pub struct VhostUserVsockBackend {
 }
 
 impl VhostUserVsockBackend {
-
     /// Create a new virtio vsock device with the given guest_cid
-    pub fn new(
-        guest_cid: u32,
-        uds_path: String,
-    ) -> Result<Self> {
+    pub fn new(guest_cid: u32, uds_path: String) -> Result<Self> {
         let config = virtio_vsock_config {
             guest_cid: guest_cid.into(),
         };
@@ -232,14 +232,10 @@ impl VhostUserVsockBackend {
         let mut queues_per_thread = Vec::new();
         let mut threads = Vec::new();
 
-        let unix_backend = VsockUnixBackend::new(
-            guest_cid.into(),
-            uds_path,
-        ).map_err(Error::CreateVsockBackend)?;
+        let unix_backend =
+            VsockUnixBackend::new(guest_cid.into(), uds_path).map_err(Error::CreateVsockBackend)?;
 
-        let thread = Mutex::new(VhostUserVsockThread::new(
-            unix_backend,
-        )?);
+        let thread = Mutex::new(VhostUserVsockThread::new(unix_backend)?);
         threads.push(thread);
         queues_per_thread.push(0b11);
 
@@ -349,8 +345,12 @@ impl VhostUserBackend for VhostUserVsockBackend {
             }
 
             if thread.event_idx {
-                vring_tx.mut_queue().update_avail_event(thread.mem.as_ref().unwrap());
-                vring_rx.mut_queue().update_avail_event(thread.mem.as_ref().unwrap());
+                vring_tx
+                    .mut_queue()
+                    .update_avail_event(thread.mem.as_ref().unwrap());
+                vring_rx
+                    .mut_queue()
+                    .update_avail_event(thread.mem.as_ref().unwrap());
             } else {
                 work = false;
             }
@@ -397,10 +397,7 @@ impl VhostUserVsockBackendConfig {
     fn parse(backend: &str) -> Result<Self> {
         let mut parser = OptionParser::new();
 
-        parser
-            .add("guest_cid")
-            .add("uds_path")
-            .add("socket");
+        parser.add("guest_cid").add("uds_path").add("socket");
         parser.parse(backend).map_err(Error::FailedConfigParse)?;
 
         let guest_cid = parser
@@ -408,7 +405,9 @@ impl VhostUserVsockBackendConfig {
             .map_err(Error::FailedConfigParse)?
             .unwrap_or(3);
         let socket = parser.get("socket").ok_or(Error::SocketParameterMissing)?;
-        let uds_path = parser.get("uds_path").ok_or(Error::UDSPathParameterMissing)?;
+        let uds_path = parser
+            .get("uds_path")
+            .ok_or(Error::UDSPathParameterMissing)?;
 
         Ok(VhostUserVsockBackendConfig {
             guest_cid,
@@ -440,11 +439,7 @@ pub fn start_vsock_backend(backend_command: &str) {
     let listener = Listener::new(&backend_config.socket, true).unwrap();
 
     let name = "vhost-user-vsock-backend";
-    let mut vsock_daemon = VhostUserDaemon::new(
-        name.to_string(),
-        vsock_backend.clone(),
-    )
-    .unwrap();
+    let mut vsock_daemon = VhostUserDaemon::new(name.to_string(), vsock_backend.clone()).unwrap();
 
     debug!("vsock_daemon is created!\n");
 
