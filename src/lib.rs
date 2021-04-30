@@ -13,7 +13,6 @@ extern crate vhost;
 extern crate vhost_user_backend;
 extern crate vm_virtio;
 
-use epoll;
 use libc::{self, EFD_NONBLOCK};
 use log::*;
 use option_parser::{OptionParser, OptionParserError};
