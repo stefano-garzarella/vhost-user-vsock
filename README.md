@@ -5,6 +5,13 @@ vhost-user-vsock daemon based on Cloud Hypervisor crates.
 vhost-user-vsock provides the virtio-vsock device emulation in user-space.
 The application implements the [Firecracker hybrid vsock (vsock over unix domain socket)](https://github.com/firecracker-microvm/firecracker/blob/master/docs/vsock.md)
 
+## Important note
+
+This application was a PoC to develop the support in QEMU.
+This **repo is archived** since we released a new `vhost-user-vsock` application
+in the [rust-vmm/vhost-device](https://github.com/rust-vmm/vhost-device/)
+workspace.
+
 ## Build
 
 ``` shell
